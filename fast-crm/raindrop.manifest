@@ -1,0 +1,21 @@
+application "fast-crm" {
+  # Main API gateway - handles incoming email requests
+  service "crm-service" {
+    visibility = "public"
+  }
+
+  # Internal services for AI processing
+  service "triage-bot" {
+    visibility = "application"
+  }
+
+  service "response-bot" {
+    visibility = "application"
+  }
+
+  # SmartSQL database for CRM lead storage with PII detection
+  smartsql "crm-database" {}
+
+  # SmartMemory for agent prompts, knowledge base, and interaction history
+  smartmemory "agent-memory" {}
+}
