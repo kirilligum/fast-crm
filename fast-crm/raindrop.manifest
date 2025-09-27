@@ -21,4 +21,7 @@ application "fast-crm" {
 
   # SmartBucket for RAG-based email history storage and retrieval
   smartbucket "email-history" {}
+
+  # SmartBucket for advisor knowledge base from uploaded documents
+  smartbucket "advisor-knowledge" {}
 }

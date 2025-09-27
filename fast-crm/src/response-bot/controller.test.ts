@@ -39,6 +39,9 @@ const mockEnv = {
     put: vi.fn(),
     search: vi.fn()
   },
+  ADVISOR_KNOWLEDGE: {
+    search: vi.fn()
+  },
   logger: {
     info: vi.fn(),
     error: vi.fn(),

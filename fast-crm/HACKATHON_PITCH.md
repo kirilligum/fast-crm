@@ -135,8 +135,37 @@ graph TD
 
 ## 🔗 Try It Live
 
-**API Endpoint**: `https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email`
+### **📊 Live CRM Dashboard with RAG Visualization**
+**Frontend**: `http://localhost:3000` *(React + Tailwind dashboard)*
 
-**GitHub**: Available for judges to review
+**🎯 Dual-Tab Interface**:
+1. **📊 Leads Database** - Traditional CRM with status tracking
+2. **💬 RAG Email History** - Context-aware conversation visualization
+
+**🚀 Demo Features**:
+- Real-time lead visualization with status badges
+- **RAG conversation flow** showing email progression
+- Side-by-side incoming emails and AI responses
+- Context building from ADD_LEAD → QUALIFY_LEAD
+- **Jenny's conversation journey**: Platform inquiry → Pricing → Onboarding
+- Automatic refresh every 30 seconds
+
+### **🚀 API Endpoints**
+**Process Email**: `POST https://svc-01k64d7wz072n0rf3zz7pw39y0.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email`
+
+**Get Leads**: `GET https://svc-01k64d7wz072n0rf3zz7pw39y0.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/leads`
+
+**Upload Advisor Document**: `POST https://svc-01k64d7wz072n0rf3zz7pw39y0.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/upload_advisor_document`
+
+### **💡 Complete System Demo Flow**
+1. **📊 Leads Tab** → Show real-time CRM with 3 leads, 2 qualified
+2. **💬 RAG Tab** → Demonstrate conversation progression:
+   - Jenny's email #1: Platform inquiry → ADD_LEAD response
+   - Jenny's email #2: Pricing questions → Context-aware pricing info
+   - Jenny's email #3: Ready to start → Advanced onboarding guidance
+3. **🔄 Live Test** → Send new email, watch both tabs update in real-time
+4. **🎯 Highlight** → AI responses reference previous conversation context
+
+**GitHub**: Full source code available for judges
 
 *Thank you - ready for questions!*

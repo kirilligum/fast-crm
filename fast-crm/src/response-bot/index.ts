@@ -131,6 +131,18 @@ export default class ResponseBotService extends Service<Env> {
           return [];
         }
       },
+      ADVISOR_KNOWLEDGE: {
+        search: async (query: string, limit?: number): Promise<Array<{
+          key: string;
+          content: string;
+          metadata: Record<string, any>;
+          score: number;
+        }>> => {
+          // TODO: Implement SmartBucket search operation once API is finalized
+          console.log('Advisor RAG Search:', { query, limit });
+          return [];
+        }
+      },
       logger: env?.logger || {
         info: console.log,
         error: console.error,

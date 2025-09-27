@@ -221,17 +221,19 @@ export async function orchestrateTriageBot(emailData: EmailPayload, env: Control
 
 export async function manageDatabaseOperations(email: string, category: CategoryType, env: ControllerEnv): Promise<string> {
   try {
+    const currentTime = new Date().toISOString();
+
     switch (category) {
       case 'ADD_LEAD':
         const insertResult = await env.CRM_DATABASE.executeQuery({
-          sqlQuery: 'INSERT INTO leads (email, status, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+          sqlQuery: `INSERT INTO leads (email, status, notes, created_at, updated_at) VALUES ('${email}', 'Lead', 'New lead from email processing', '${currentTime}', '${currentTime}') ON CONFLICT(email) DO UPDATE SET status = excluded.status, notes = excluded.notes, updated_at = excluded.updated_at`,
           format: 'json'
         });
         return `INSERT INTO leads - email: ${email}, query: ${insertResult.queryExecuted}`;
 
       case 'QUALIFY_LEAD':
         const updateResult = await env.CRM_DATABASE.executeQuery({
-          sqlQuery: 'UPDATE leads SET status = ?, updated_at = ? WHERE email = ?',
+          sqlQuery: `UPDATE leads SET status = 'Qualified', updated_at = '${currentTime}' WHERE email = '${email}'`,
           format: 'json'
         });
         return `UPDATE leads SET status = 'Qualified' WHERE email = '${email}' - query: ${updateResult.queryExecuted}`;

@@ -74,6 +74,10 @@ import {
   buildRAGEnhancedPrompt,
   extractSearchTerms
 } from '../utils/rag';
+import {
+  prepareAdvisorContext,
+  buildAdvisorEnhancedPrompt
+} from '../utils/advisor';
 
 // Environment interface for dependency injection
 interface ControllerEnv {
@@ -86,6 +90,14 @@ interface ControllerEnv {
   };
   EMAIL_HISTORY: {
     put: (key: string, content: string, metadata?: Record<string, any>) => Promise<void>;
+    search: (query: string, limit?: number) => Promise<Array<{
+      key: string;
+      content: string;
+      metadata: Record<string, any>;
+      score: number;
+    }>>;
+  };
+  ADVISOR_KNOWLEDGE: {
     search: (query: string, limit?: number) => Promise<Array<{
       key: string;
       content: string;
@@ -119,6 +131,16 @@ let env: ControllerEnv = {
     put: async (key: string, content: string, metadata?: Record<string, any>): Promise<void> => {
       // Default implementation - no-op
     },
+    search: async (query: string, limit?: number): Promise<Array<{
+      key: string;
+      content: string;
+      metadata: Record<string, any>;
+      score: number;
+    }>> => {
+      return [];
+    }
+  },
+  ADVISOR_KNOWLEDGE: {
     search: async (query: string, limit?: number): Promise<Array<{
       key: string;
       content: string;
@@ -215,6 +237,64 @@ Value Propositions:
 `;
 
 // ================================
+// ADVISOR RAG FUNCTIONS
+// ================================
+
+async function retrieveAdvisorContext(emailData: EmailPayload): Promise<any> {
+  try {
+    // Extract search terms from email for advisor knowledge retrieval
+    const searchTerms = extractSearchTerms(emailData);
+
+    // Search advisor knowledge base for relevant chunks
+    const advisorResults = await env.ADVISOR_KNOWLEDGE.search(searchTerms.join(' '), 3);
+
+    if (advisorResults.length === 0) {
+      env.logger.info('No relevant advisor knowledge found', { searchTerms });
+      return {
+        relevant_chunks: [],
+        documents_used: [],
+        advice_summary: 'No advisor knowledge available.',
+        confidence_score: 0
+      };
+    }
+
+    // Convert search results to advisor chunks format
+    const advisorChunks = advisorResults.map(result => ({
+      id: result.key,
+      document_id: result.metadata.document_id || 'unknown',
+      document_title: result.metadata.document_title || 'Unknown Document',
+      content: result.content,
+      chunk_index: result.metadata.chunk_index || 0,
+      total_chunks: result.metadata.total_chunks || 1,
+      metadata: {
+        section_title: result.metadata.section_title,
+        topic_keywords: result.metadata.topic_keywords || [],
+        relevance_score: result.score
+      }
+    }));
+
+    // Use advisor utilities to prepare context
+    const advisorContext = prepareAdvisorContext(advisorChunks, emailData, 3);
+
+    env.logger.info('Advisor context retrieved successfully', {
+      chunks_found: advisorChunks.length,
+      confidence_score: advisorContext.confidence_score,
+      documents_used: advisorContext.documents_used
+    });
+
+    return advisorContext;
+  } catch (error) {
+    env.logger.error('Failed to retrieve advisor context', { error: error instanceof Error ? error.message : 'Unknown error' });
+    return {
+      relevant_chunks: [],
+      documents_used: [],
+      advice_summary: 'Advisor knowledge retrieval failed.',
+      confidence_score: 0
+    };
+  }
+}
+
+// ================================
 // EXPORTED FUNCTIONS
 // ================================
 
@@ -225,8 +305,14 @@ export async function orchestrateResponseGeneration(
   const interactionId = generateInteractionId();
 
   try {
-    // Step 1: Retrieve RAG context from email history
-    const ragContext = await retrieveRAGContext(emailData, interactionId);
+    // Step 1: Retrieve RAG context from email history and advisor knowledge
+    const [ragContext, advisorContext] = await Promise.allSettled([
+      retrieveRAGContext(emailData, interactionId),
+      retrieveAdvisorContext(emailData)
+    ]);
+
+    const emailRagContext = ragContext.status === 'fulfilled' ? ragContext.value : { relevant_chunks: [], conversation_summary: '', confidence_score: 0 };
+    const advisorRagContext = advisorContext.status === 'fulfilled' ? advisorContext.value : { relevant_chunks: [], documents_used: [], advice_summary: '', confidence_score: 0 };
 
     // Step 2: Retrieve prompt and knowledge
     const [prompt, knowledge] = await Promise.allSettled([
@@ -237,12 +323,17 @@ export async function orchestrateResponseGeneration(
     const responsePrompt = prompt.status === 'fulfilled' ? prompt.value : FALLBACK_RESPONSE_PROMPTS[category];
     const knowledgeBase = knowledge.status === 'fulfilled' ? knowledge.value : FALLBACK_KNOWLEDGE;
 
-    // Step 3: Prepare RAG-enhanced context for AI generation
+    // Step 3: Prepare multi-layered RAG-enhanced context for AI generation
     const baseContext = prepareResponseContext(category, emailData, knowledgeBase);
-    const ragEnhancedPrompt = buildRAGEnhancedPrompt(responsePrompt, ragContext, emailData);
 
-    // Step 4: Execute AI generation with RAG context
-    const aiResponse = await executeAIGeneration(`${ragEnhancedPrompt}\n\n${baseContext}`);
+    // Build email RAG enhanced prompt first
+    const emailRagEnhancedPrompt = buildRAGEnhancedPrompt(responsePrompt, emailRagContext, emailData);
+
+    // Then enhance with advisor knowledge
+    const advisorEnhancedPrompt = buildAdvisorEnhancedPrompt(emailRagEnhancedPrompt, advisorRagContext, emailData);
+
+    // Step 4: Execute AI generation with both RAG contexts
+    const aiResponse = await executeAIGeneration(`${advisorEnhancedPrompt}\n\n${baseContext}`);
 
     // Step 5: Parse and validate response
     const emailResponse = parseAIResponse(aiResponse, emailData.sender_email, emailData.subject);
@@ -257,10 +348,13 @@ export async function orchestrateResponseGeneration(
     // Step 7: Store email and response in RAG system for future context
     await storeEmailInRAG(emailData, emailResponse, category, interactionId);
 
-    env.logger.info('RAG-enhanced response generated successfully', {
+    env.logger.info('Multi-RAG enhanced response generated successfully', {
       sender: emailData.sender_email,
       category,
-      rag_chunks_used: ragContext.relevant_chunks.length,
+      email_rag_chunks_used: emailRagContext.relevant_chunks.length,
+      advisor_chunks_used: advisorRagContext.relevant_chunks.length,
+      advisor_documents_used: advisorRagContext.documents_used,
+      advisor_confidence: advisorRagContext.confidence_score,
       interaction_id: interactionId
     });
 
