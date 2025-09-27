@@ -66,6 +66,14 @@ import {
   selectResponseTemplate,
   validateEmailResponse
 } from './model';
+import {
+  chunkEmailContent,
+  chunkResponseEmail,
+  formatChunksForStorage,
+  prepareRAGContext,
+  buildRAGEnhancedPrompt,
+  extractSearchTerms
+} from '../utils/rag';
 
 // Environment interface for dependency injection
 interface ControllerEnv {
@@ -75,6 +83,15 @@ interface ControllerEnv {
   AGENT_MEMORY: {
     get: (key: string) => Promise<string | null>;
     search: (query: string) => Promise<Array<{ content: string }>>;
+  };
+  EMAIL_HISTORY: {
+    put: (key: string, content: string, metadata?: Record<string, any>) => Promise<void>;
+    search: (query: string, limit?: number) => Promise<Array<{
+      key: string;
+      content: string;
+      metadata: Record<string, any>;
+      score: number;
+    }>>;
   };
   logger: {
     info: (message: string, meta?: any) => void;
@@ -95,6 +112,19 @@ let env: ControllerEnv = {
       return null;
     },
     search: async (query: string): Promise<Array<{ content: string }>> => {
+      return [];
+    }
+  },
+  EMAIL_HISTORY: {
+    put: async (key: string, content: string, metadata?: Record<string, any>): Promise<void> => {
+      // Default implementation - no-op
+    },
+    search: async (query: string, limit?: number): Promise<Array<{
+      key: string;
+      content: string;
+      metadata: Record<string, any>;
+      score: number;
+    }>> => {
       return [];
     }
   },
@@ -192,8 +222,13 @@ export async function orchestrateResponseGeneration(
   category: CategoryType,
   emailData: EmailPayload
 ): Promise<EmailResponse> {
+  const interactionId = generateInteractionId();
+
   try {
-    // Step 1: Retrieve prompt and knowledge
+    // Step 1: Retrieve RAG context from email history
+    const ragContext = await retrieveRAGContext(emailData, interactionId);
+
+    // Step 2: Retrieve prompt and knowledge
     const [prompt, knowledge] = await Promise.allSettled([
       retrieveResponsePrompt(category),
       retrieveKnowledgeBase()
@@ -202,27 +237,43 @@ export async function orchestrateResponseGeneration(
     const responsePrompt = prompt.status === 'fulfilled' ? prompt.value : FALLBACK_RESPONSE_PROMPTS[category];
     const knowledgeBase = knowledge.status === 'fulfilled' ? knowledge.value : FALLBACK_KNOWLEDGE;
 
-    // Step 2: Prepare context for AI generation
-    const context = prepareResponseContext(category, emailData, knowledgeBase);
+    // Step 3: Prepare RAG-enhanced context for AI generation
+    const baseContext = prepareResponseContext(category, emailData, knowledgeBase);
+    const ragEnhancedPrompt = buildRAGEnhancedPrompt(responsePrompt, ragContext, emailData);
 
-    // Step 3: Execute AI generation
-    const aiResponse = await executeAIGeneration(`${responsePrompt}\n\n${context}`);
+    // Step 4: Execute AI generation with RAG context
+    const aiResponse = await executeAIGeneration(`${ragEnhancedPrompt}\n\n${baseContext}`);
 
-    // Step 4: Parse and validate response
+    // Step 5: Parse and validate response
     const emailResponse = parseAIResponse(aiResponse, emailData.sender_email, emailData.subject);
 
-    // Step 5: Validate final response
+    // Step 6: Validate final response
     const validation = validateEmailResponse(emailResponse);
     if (!validation.isValid) {
       env.logger.warn('Generated response failed validation', { errors: validation.errors });
       return handleGenerationError(new Error('Response validation failed'), emailData);
     }
 
+    // Step 7: Store email and response in RAG system for future context
+    await storeEmailInRAG(emailData, emailResponse, category, interactionId);
+
+    env.logger.info('RAG-enhanced response generated successfully', {
+      sender: emailData.sender_email,
+      category,
+      rag_chunks_used: ragContext.relevant_chunks.length,
+      interaction_id: interactionId
+    });
+
     return emailResponse;
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    env.logger.error('Response generation failed', { error: errorMessage, category, sender: emailData.sender_email });
+    env.logger.error('RAG-enhanced response generation failed', {
+      error: errorMessage,
+      category,
+      sender: emailData.sender_email,
+      interaction_id: interactionId
+    });
     return handleGenerationError(error instanceof Error ? error : new Error(String(error)), emailData);
   }
 }
@@ -403,4 +454,104 @@ export function handleGenerationError(error: Error, emailData: EmailPayload): Em
     subject: `Re: ${emailData.subject}`,
     body: fallbackBody
   };
+}
+
+// ================================
+// RAG FUNCTIONS
+// ================================
+
+export function generateInteractionId(): string {
+  return `interaction_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+}
+
+export async function retrieveRAGContext(emailData: EmailPayload, interactionId: string): Promise<any> {
+  try {
+    // Extract search terms from current email
+    const searchTerms = extractSearchTerms(emailData);
+    const searchQuery = `sender:${emailData.sender_email} ${searchTerms.slice(0, 5).join(' ')}`;
+
+    env.logger.info('Retrieving RAG context', {
+      sender: emailData.sender_email,
+      search_terms: searchTerms.slice(0, 5),
+      interaction_id: interactionId
+    });
+
+    // Search for relevant email history
+    const searchResults = await env.EMAIL_HISTORY.search(searchQuery);
+    const limitedResults = searchResults.slice(0, 10);
+
+    // Convert search results to email chunks format
+    const relevantChunks = limitedResults.map((result: any) => ({
+      id: result.key,
+      sender_email: result.metadata.sender_email || emailData.sender_email,
+      timestamp: result.metadata.timestamp || new Date().toISOString(),
+      subject: result.metadata.subject || '',
+      content: result.content,
+      chunk_index: result.metadata.chunk_index || 0,
+      total_chunks: result.metadata.total_chunks || 1,
+      metadata: {
+        email_type: result.metadata.email_type || 'incoming',
+        category: result.metadata.category,
+        interaction_id: result.metadata.interaction_id || 'unknown'
+      }
+    }));
+
+    return prepareRAGContext(relevantChunks);
+  } catch (error) {
+    env.logger.warn('Failed to retrieve RAG context', {
+      error: error instanceof Error ? error.message : String(error),
+      sender: emailData.sender_email,
+      interaction_id: interactionId
+    });
+
+    // Return empty context on failure
+    return prepareRAGContext([]);
+  }
+}
+
+export async function storeEmailInRAG(
+  emailData: EmailPayload,
+  responseEmail: EmailResponse,
+  category: string,
+  interactionId: string
+): Promise<void> {
+  try {
+    // Chunk incoming email
+    const incomingChunks = chunkEmailContent(emailData, category, interactionId);
+    const incomingChunksForStorage = formatChunksForStorage(incomingChunks);
+
+    // Chunk outgoing response
+    const responseChunks = chunkResponseEmail(
+      responseEmail.to,
+      responseEmail.subject,
+      responseEmail.body,
+      category,
+      interactionId
+    );
+    const responseChunksForStorage = formatChunksForStorage(responseChunks);
+
+    // Store all chunks in SmartBucket
+    const allChunks = [...incomingChunksForStorage, ...responseChunksForStorage];
+
+    await Promise.all(
+      allChunks.map(chunk =>
+        env.EMAIL_HISTORY.put(chunk.key, chunk.content, chunk.metadata)
+      )
+    );
+
+    env.logger.info('Email interaction stored in RAG system', {
+      sender: emailData.sender_email,
+      interaction_id: interactionId,
+      chunks_stored: allChunks.length,
+      incoming_chunks: incomingChunksForStorage.length,
+      response_chunks: responseChunksForStorage.length
+    });
+  } catch (error) {
+    env.logger.error('Failed to store email in RAG system', {
+      error: error instanceof Error ? error.message : String(error),
+      sender: emailData.sender_email,
+      interaction_id: interactionId
+    });
+    // Don't throw - RAG storage failure shouldn't break response generation
+  }
 }

@@ -35,6 +35,10 @@ const mockEnv = {
     get: vi.fn(),
     search: vi.fn()
   },
+  EMAIL_HISTORY: {
+    put: vi.fn(),
+    search: vi.fn()
+  },
   logger: {
     info: vi.fn(),
     error: vi.fn(),

@@ -115,6 +115,22 @@ export default class ResponseBotService extends Service<Env> {
           return memories ? memories.map(m => ({ content: m.content })) : [];
         }
       } : { get: async () => null, search: async () => [] },
+      EMAIL_HISTORY: {
+        put: async (key: string, content: string, metadata?: Record<string, any>): Promise<void> => {
+          // TODO: Implement SmartBucket put operation once API is finalized
+          console.log('RAG Storage:', { key, metadata });
+        },
+        search: async (query: string, limit?: number): Promise<Array<{
+          key: string;
+          content: string;
+          metadata: Record<string, any>;
+          score: number;
+        }>> => {
+          // TODO: Implement SmartBucket search operation once API is finalized
+          console.log('RAG Search:', { query, limit });
+          return [];
+        }
+      },
       logger: env?.logger || {
         info: console.log,
         error: console.error,

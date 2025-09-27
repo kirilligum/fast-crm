@@ -81,6 +81,28 @@ export interface InteractionLog {
   db_action: string;
 }
 
+// RAG (Retrieval-Augmented Generation) Types
+export interface RAGStorageRequest {
+  sender_email: string;
+  email_chunks: Array<{
+    key: string;
+    content: string;
+    metadata: Record<string, any>;
+  }>;
+  response_chunks?: Array<{
+    key: string;
+    content: string;
+    metadata: Record<string, any>;
+  }>;
+}
+
+export interface WorkflowResult {
+  category: string;
+  db_action: string;
+  response_email: EmailResponse | null;
+  requires_review: boolean;
+}
+
 // Error Types
 export class ValidationError extends Error {
   constructor(message: string, public field?: string) {

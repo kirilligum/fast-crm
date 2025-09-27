@@ -18,4 +18,7 @@ application "fast-crm" {
 
   # SmartMemory for agent prompts, knowledge base, and interaction history
   smartmemory "agent-memory" {}
+
+  # SmartBucket for RAG-based email history storage and retrieval
+  smartbucket "email-history" {}
 }
