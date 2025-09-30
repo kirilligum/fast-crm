@@ -269,6 +269,19 @@ curl -X POST -H "Content-Type: application/json" \
 - ✅ **Database Integrity**: Proper lead creation and updates
 - ✅ **RAG Context**: Conversation continuity maintained
 
+## 📋 Project Foundation
+
+### Initial PRD
+This project was built following a comprehensive Product Requirements Document that outlines the technical specifications and LiquidMetal Raindrop platform integration strategy. See **[PRD.md](PRD.md)** for detailed:
+
+- **System Architecture**: AI Agent pattern with SmartMemory, SmartSQL, and SmartBucket integration
+- **Agent Prompts**: Complete TriageBot and ResponseBot system prompts
+- **Data Models**: Database schemas and API specifications
+- **Test Cases**: Comprehensive validation scenarios with expected outputs
+- **Platform Integration**: Raindrop component utilization and design principles
+
+> **For developers new to LiquidMetal**: Start with the PRD to understand the architectural foundation and AI agent patterns used in this implementation.
+
 ## 💻 Development
 
 ### Tech Stack
