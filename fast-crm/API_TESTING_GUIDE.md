@@ -1,40 +1,6 @@
-# Fast-CRM API Testing Guide
+# API Testing Guide
 
-## Overview
-This guide demonstrates how to test the Fast-CRM API endpoints with RAG (Retrieval-Augmented Generation) functionality.
-
-## Base URL
-```
-https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run
-```
-
-## Main Endpoint
-### POST /api/v1/process_email
-
-**Purpose**: Process incoming emails with intelligent triage, lead management, and context-aware response generation.
-
-**Request Format**:
-```bash
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"sender_email": "user@example.com", "subject": "Email subject", "body": "Email content"}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
-```
-
-**Response Format**:
-```json
-{
-  "status": "processed",
-  "category": "ADD_LEAD" | "QUALIFY_LEAD",
-  "sender_email": "user@example.com",
-  "db_action": "INSERT INTO leads - email: user@example.com, query: ...",
-  "response_email": {
-    "to": "user@example.com",
-    "subject": "Re: Email subject",
-    "body": "Generated response content"
-  },
-  "requires_review": false
-}
-```
+> **For complete API documentation, see the [main README.md](../README.md). This file contains detailed testing scenarios and RAG-specific examples.**
 
 ## RAG Features
 

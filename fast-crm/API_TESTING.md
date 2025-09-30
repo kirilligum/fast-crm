@@ -1,12 +1,6 @@
-# Fast-CRM API Testing Guide
+# Manual API Testing Reference
 
-This document provides manual testing instructions for the Fast-CRM API endpoint using curl commands.
-
-## API Endpoint
-
-```
-POST https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email
-```
+> **For complete setup and usage guide, see the [main README.md](../README.md). This file contains specific test cases and curl commands.**
 
 ## Test Cases
 
