@@ -22,7 +22,7 @@ The system maintains conversation context by:
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "prospect@startup.com", "subject": "Interested in AI platform", "body": "We are building an AI application and need a scalable platform."}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Expected**: `ADD_LEAD` category with informative platform introduction.
@@ -31,7 +31,7 @@ curl -X POST -H "Content-Type: application/json" \
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "prospect@startup.com", "subject": "Pricing questions", "body": "Thanks for the info! Could you tell me about pricing for startups?"}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Expected**: Response should reference previous conversation and provide pricing details.
@@ -40,7 +40,7 @@ curl -X POST -H "Content-Type: application/json" \
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "dev@techcorp.com", "subject": "API integration requirements", "body": "We need detailed technical specifications for integrating your AI capabilities into our existing infrastructure."}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Expected**: `QUALIFY_LEAD` category with technical documentation and integration guidance.
@@ -52,21 +52,21 @@ Test conversation continuity with multiple emails from the same sender:
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "jenny@newstartup.com", "subject": "Following up from the Hackathon", "body": "Hi there! It was great meeting you at the hackathon yesterday. I am Jenny from NewStartup and I am really interested in learning more about what LiquidMetal AI does."}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Email 2**: Follow-up question
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "jenny@newstartup.com", "subject": "Quick question about pricing", "body": "Thanks for the information about Raindrop. Could you tell me more about the pricing structure? We are a small startup so budget is important."}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Email 3**: Conversion intent
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "jenny@newstartup.com", "subject": "Ready to get started", "body": "Perfect! I signed up for the trial and went through the tutorial. Could you provide best practices for our specific use case?"}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Expected**: Each response should build on previous conversation context, showing progression from introduction → pricing → implementation guidance.

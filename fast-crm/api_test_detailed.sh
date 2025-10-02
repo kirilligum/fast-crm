@@ -14,7 +14,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Deployment endpoint
-CRM_ENDPOINT="https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run"
+CRM_ENDPOINT="https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run"
 API_URL="${CRM_ENDPOINT}/api/v1/process_email"
 
 # Test counter

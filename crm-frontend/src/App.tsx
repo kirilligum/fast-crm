@@ -84,7 +84,7 @@ function App() {
       setLoading(true)
 
       // First, let's try to query the database for leads
-      const response = await fetch('https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/leads', {
+      const response = await fetch('https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/leads', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ function App() {
 
       // Try the API first
       try {
-        const response = await fetch(`https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/leads?email=${encodeURIComponent(email)}`, {
+        const response = await fetch(`https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/leads?email=${encodeURIComponent(email)}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ function App() {
 
   const fetchEmailHistory = async () => {
     try {
-      const response = await fetch('https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/email_history', {
+      const response = await fetch('https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/email_history', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -231,7 +231,7 @@ function App() {
 
   const fetchAdvisorDocs = async () => {
     try {
-      const response = await fetch('https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents', {
+      const response = await fetch('https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -295,7 +295,7 @@ function App() {
 
     setUploading(true)
     try {
-      const response = await fetch('https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/upload_advisor_document', {
+      const response = await fetch('https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/upload_advisor_document', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -333,7 +333,7 @@ function App() {
     }
 
     try {
-      const response = await fetch(`https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents?id=${encodeURIComponent(documentId)}`, {
+      const response = await fetch(`https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents?id=${encodeURIComponent(documentId)}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -359,7 +359,7 @@ function App() {
     try {
       setShowingContent(documentId)
 
-      const response = await fetch(`https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents/${encodeURIComponent(documentId)}/content`, {
+      const response = await fetch(`https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents/${encodeURIComponent(documentId)}/content`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

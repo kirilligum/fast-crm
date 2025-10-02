@@ -64,7 +64,7 @@ Technical founders and developers (often met at hackathons) building AI applicat
 const initCommand = `curl -X POST \\
   -H "Content-Type: application/json" \\
   -d '{"key": "triage-prompt", "content": "${TRIAGE_SYSTEM_PROMPT.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"}' \\
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/init-prompt"`;
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/init-prompt"`;
 
 console.log('='.repeat(80));
 console.log('TRIAGE PROMPT INITIALIZATION');

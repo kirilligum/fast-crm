@@ -12,7 +12,7 @@
 ```bash
 curl -s -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "jenny@newstartup.com", "subject": "Following up from the Hackathon", "body": "Hi there! It was great meeting you at the hackathon yesterday. I am Jenny from NewStartup and I am really interested in learning more about what LiquidMetal AI does. Could you send me some information about your platform?"}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email" | jq
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email" | jq
 ```
 
 ### TEST 2: QUALIFY_LEAD - Technical Feature Inquiry (New Lead)
@@ -23,7 +23,7 @@ curl -s -X POST -H "Content-Type: application/json" \
 ```bash
 curl -s -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "dev_dave@aistartup.io", "subject": "SmartMemory vs Actors for long-running agents", "body": "Hey! I am building a multi-agent system that needs persistent context between sessions. I have been using Redis for state but running into scaling issues. Can Raindrop help with this? Specifically interested in SmartMemory vs Actors for long-running agent state. What are the tradeoffs?"}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email" | jq
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email" | jq
 ```
 
 ### TEST 3: QUALIFY_LEAD - Existing Lead Update
@@ -34,7 +34,7 @@ curl -s -X POST -H "Content-Type: application/json" \
 ```bash
 curl -s -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "cto_carla@healthtech.com", "subject": "SmartSQL capabilities and PII", "body": "Following up from the demo yesterday. Our HealthTech app handles sensitive patient data. Can SmartSQL help with PII detection and compliance? We need to be HIPAA compliant."}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email" | jq
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email" | jq
 ```
 
 ### TEST 4: IRRELEVANT - Spam Email
@@ -45,7 +45,7 @@ curl -s -X POST -H "Content-Type: application/json" \
 ```bash
 curl -s -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "marketing@spam.com", "subject": "Boost your SEO today!", "body": "Amazing SEO services! Get to page 1 of Google fast!"}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email" | jq
+  "https://svc-01k6h492192p3412a4cbn6dp4z.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email" | jq
 ```
 
 ## Expected Response Format
