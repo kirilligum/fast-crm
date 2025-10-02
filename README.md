@@ -1,12 +1,11 @@
 # 🚀 Fast-CRM: AI-Powered Lead Management System
 
-**Built by [Kirill Igumenshchev](https://x.com/kirill_igum)** | 🏆 **Hackathon Winner - LiquidMetal AI Prize**
+**Built by [Kirill Igumenshchev](https://x.com/kirill_igum)** [![Follow @kirill_igum](https://img.shields.io/twitter/follow/kirill_igum?style=social)](https://x.com/kirill_igum) | 🏆 **Hackathon Winner - LiquidMetal AI Prize**
 
 [![Built with Raindrop](https://img.shields.io/badge/Built%20with-Raindrop-blue)](https://liquidmetal.ai)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Follow @kirill_igum](https://img.shields.io/twitter/follow/kirill_igum?style=social)](https://x.com/kirill_igum)
 
 > **Autonomous CRM that instantly processes incoming emails, categorizes leads intelligently, and generates contextual responses - all powered by AI.**
 
