@@ -9,6 +9,12 @@
 
 Built during a hackathon using the **LiquidMetal Raindrop Platform**, this system demonstrates the future of AI-powered sales automation with 100% TypeScript, comprehensive testing, and production-ready deployment.
 
+## 🎥 Demo Video
+
+[![Fast-CRM Demo](https://img.youtube.com/vi/tW1KtgKIsds/maxresdefault.jpg)](https://youtu.be/tW1KtgKIsds)
+
+**[▶️ Watch the Full Demo & Pitch](https://youtu.be/tW1KtgKIsds)** - See Fast-CRM in action with live email processing, intelligent categorization, and context-aware responses.
+
 ## 🎯 Motivation
 
 **Most CRM lead qualification can be done by AI that has expert training and context.** Fast-CRM makes this a reality with **multi-agent flow, SQL, and RAG**.
@@ -408,7 +414,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🏆 Acknowledgments
 
-- Built during a hackathon using **LiquidMetal Raindrop Platform**
+![Hackathon Winner - LiquidMetal AI Prize](pics/liquidmetal_kirill_resized.jpg)
+
+**🏅 Hackathon Winner** - Fast-CRM won the LiquidMetal AI sponsor prize! Built during the hackathon using the **LiquidMetal Raindrop Platform**.
+
 - Demonstrates modern AI-powered CRM capabilities
 - Showcases cloud-native development patterns
 - Production-ready architecture and testing
