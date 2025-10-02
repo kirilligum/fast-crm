@@ -63,6 +63,7 @@ import { crmDatabaseSchema } from '../sql/crm-database';
 const API_ENDPOINTS = {
   PROCESS_EMAIL: '/api/v1/process_email',
   GET_LEADS: '/api/v1/leads',
+  DELETE_LEAD: '/api/v1/leads',
   GET_EMAIL_HISTORY: '/api/v1/email_history',
   UPLOAD_ADVISOR_DOCUMENT: '/api/v1/upload_advisor_document',
   GET_ADVISOR_DOCUMENTS: '/api/v1/advisor_documents',
@@ -81,7 +82,7 @@ const HTTP_STATUS = {
 
 const CORS_CONFIG = {
   MAX_AGE: '86400',
-  ALLOWED_METHODS: 'GET, POST, OPTIONS',
+  ALLOWED_METHODS: 'GET, POST, DELETE, OPTIONS',
   ALLOWED_HEADERS: 'Content-Type, Authorization'
 } as const;
 
@@ -127,6 +128,8 @@ export default class extends Service<Env> {
       const url = new URL(request.url);
       const path = url.pathname;
 
+      this.env.logger.info(`Incoming request: ${request.method} ${path}`);
+
       if (path === API_ENDPOINTS.PROCESS_EMAIL) {
         if (request.method === 'POST') {
           return await this.handleProcessEmail(request);
@@ -140,9 +143,11 @@ export default class extends Service<Env> {
       } else if (path === API_ENDPOINTS.GET_LEADS) {
         if (request.method === 'GET') {
           return await this.handleGetLeads(request);
+        } else if (request.method === 'DELETE') {
+          return await this.handleDeleteLead(request);
         } else {
           return this.formatErrorResponse(
-            new Error('Only GET and OPTIONS methods are supported'),
+            new Error('Only GET, DELETE and OPTIONS methods are supported'),
             HTTP_STATUS.METHOD_NOT_ALLOWED,
             corsHeaders
           );
@@ -332,6 +337,53 @@ export default class extends Service<Env> {
       this.env.logger.error(`Failed to fetch leads: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return this.formatErrorResponse(
         error instanceof Error ? error : new Error('Failed to fetch leads'),
+        500,
+        corsHeaders
+      );
+    }
+  }
+
+  async handleDeleteLead(request: Request): Promise<Response> {
+    const corsHeaders = this.getCORSHeaders();
+
+    try {
+      // Get email from query parameter
+      const url = new URL(request.url);
+      const email = url.searchParams.get('email');
+
+      if (!email) {
+        return this.formatErrorResponse(
+          new Error('Email parameter is required'),
+          400,
+          corsHeaders
+        );
+      }
+
+      this.env.logger.info(`Deleting lead: ${email}`);
+
+      // Delete the lead from database
+      const result = await this.env.CRM_DATABASE.executeQuery({
+        sqlQuery: `DELETE FROM leads WHERE email = '${email.replace(/'/g, "''")}'`,
+        format: 'json'
+      });
+
+      this.env.logger.info(`Lead deleted successfully: ${email}`, { result });
+
+      return new Response(JSON.stringify({
+        success: true,
+        message: `Lead ${email} deleted successfully`
+      }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders
+        }
+      });
+
+    } catch (error) {
+      this.env.logger.error(`Failed to delete lead: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      return this.formatErrorResponse(
+        error instanceof Error ? error : new Error('Failed to delete lead'),
         500,
         corsHeaders
       );

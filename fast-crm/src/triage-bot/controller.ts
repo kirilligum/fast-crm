@@ -199,6 +199,8 @@ Analyze the incoming email and categorize it according to the rules below. You M
    - Mentioning specific compute needs (e.g., Actors vs Services).
    - Describing a concrete use case for an AI agent or Multi-Agent System they are building.
    - Asking about the Raindrop MCP (Model Context Protocol) or advanced tutorials (e.g., "Building a CRUD API with Claude Code + Raindrop MCP").
+   - Showing conversion intent: mentioning they have "signed up for trial", "completed tutorial", "ready to get started", or asking for "best practices" after engaging with the platform.
+   - Requesting specific implementation guidance or next steps after initial engagement.
 
 2. ADD_LEAD
    Definition: The sender is a potential prospect but has not shown specific, qualified intent.

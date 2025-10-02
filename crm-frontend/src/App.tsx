@@ -84,7 +84,7 @@ function App() {
       setLoading(true)
 
       // First, let's try to query the database for leads
-      const response = await fetch('https://svc-01k64g4ed7smj40axtr7nbaxkv.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/leads', {
+      const response = await fetch('https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/leads', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -142,9 +142,46 @@ function App() {
     }
   }
 
+  const deleteLead = async (email: string) => {
+    try {
+      console.log('Attempting to delete lead:', email)
+
+      // Try the API first
+      try {
+        const response = await fetch(`https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/leads?email=${encodeURIComponent(email)}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+
+        console.log('Delete response status:', response.status)
+
+        if (response.ok) {
+          const result = await response.json()
+          console.log('Delete successful via API:', result)
+          alert('Lead deleted successfully!')
+          fetchLeads()
+          return
+        }
+      } catch (apiError) {
+        console.log('API delete failed, using frontend-only delete:', apiError)
+      }
+
+      // Fallback: Remove from frontend state (since API endpoint isn't available yet)
+      console.log('Removing lead from frontend state:', email)
+      setLeads(currentLeads => currentLeads.filter(lead => lead.email !== email))
+      alert(`Lead ${email} removed from display (API endpoint not available - this is a frontend-only removal)`)
+
+    } catch (err) {
+      console.error('Failed to delete lead - Exception:', err)
+      alert(`Failed to delete lead: ${err.message}`)
+    }
+  }
+
   const fetchEmailHistory = async () => {
     try {
-      const response = await fetch('https://svc-01k64g4ed7smj40axtr7nbaxkv.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/email_history', {
+      const response = await fetch('https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/email_history', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -194,7 +231,7 @@ function App() {
 
   const fetchAdvisorDocs = async () => {
     try {
-      const response = await fetch('https://svc-01k64g4ed7smj40axtr7nbaxkv.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents', {
+      const response = await fetch('https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -258,7 +295,7 @@ function App() {
 
     setUploading(true)
     try {
-      const response = await fetch('https://svc-01k64g4ed7smj40axtr7nbaxkv.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/upload_advisor_document', {
+      const response = await fetch('https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/upload_advisor_document', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -296,7 +333,7 @@ function App() {
     }
 
     try {
-      const response = await fetch(`https://svc-01k64g4ed7smj40axtr7nbaxkv.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents?id=${encodeURIComponent(documentId)}`, {
+      const response = await fetch(`https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents?id=${encodeURIComponent(documentId)}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -322,7 +359,7 @@ function App() {
     try {
       setShowingContent(documentId)
 
-      const response = await fetch(`https://svc-01k64g4ed7smj40axtr7nbaxkv.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents/${encodeURIComponent(documentId)}/content`, {
+      const response = await fetch(`https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/advisor_documents/${encodeURIComponent(documentId)}/content`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -515,6 +552,9 @@ function App() {
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Updated
                           </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
@@ -536,6 +576,14 @@ function App() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {formatDate(lead.updated_at)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <button
+                                onClick={() => deleteLead(lead.email)}
+                                className="text-red-600 hover:text-red-900 text-sm font-medium"
+                              >
+                                🗑️ Delete
+                              </button>
                             </td>
                           </tr>
                         ))}

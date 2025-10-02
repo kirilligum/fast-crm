@@ -58,7 +58,7 @@ run_test() {
     # Validate response
     if [ "$http_status" = "200" ]; then
         # Check if response contains expected action
-        if echo "$response_body" | grep -q "\"action\".*\"$expected_action\""; then
+        if echo "$response_body" | grep -q "\"category\".*\"$expected_action\""; then
             echo -e "${GREEN}✓ PASSED: Correct action returned${NC}"
             PASSED_TESTS=$((PASSED_TESTS + 1))
         else

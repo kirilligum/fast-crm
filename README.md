@@ -50,7 +50,7 @@ npm install && npm run dev
 ### Live Demo
 
 - **Frontend Dashboard**: http://localhost:3000
-- **API Endpoint**: `https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run`
+- **API Endpoint**: `https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run`
 
 ## 🏗️ System Architecture
 
@@ -177,7 +177,7 @@ curl -X POST -H "Content-Type: application/json" \
     "subject": "Interested in AI platform",
     "body": "We are building an AI application and need a scalable platform."
   }' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Response Format:**
@@ -219,7 +219,7 @@ curl -X POST -H "Content-Type: application/json" \
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "jenny@newstartup.com", "subject": "Following up from the Hackathon", "body": "Hi there! It was great meeting you at the hackathon yesterday. I am Jenny from NewStartup and I am really interested in learning more about what LiquidMetal AI does."}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Expected:** `ADD_LEAD` category with platform introduction
@@ -229,7 +229,7 @@ curl -X POST -H "Content-Type: application/json" \
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "jenny@newstartup.com", "subject": "Quick question about pricing", "body": "Thanks for the information about Raindrop. Could you tell me more about the pricing structure? We are a small startup so budget is important."}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Expected:** Response references previous conversation and provides pricing details
@@ -239,7 +239,7 @@ curl -X POST -H "Content-Type: application/json" \
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"sender_email": "jenny@newstartup.com", "subject": "Ready to get started", "body": "Perfect! I signed up for the trial and went through the tutorial. Could you provide best practices for our specific use case?"}' \
-  "https://svc-01k6432yz0yhvw4qakgess7g1b.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
+  "https://svc-01k6gjy9616fvr35vvwz3kxm42.01k2trmrbsdx3erbaamwzzydy8.lmapp.run/api/v1/process_email"
 ```
 
 **Expected:** `QUALIFY_LEAD` category with advanced implementation guidance
